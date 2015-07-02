@@ -41,8 +41,13 @@ endchoice
 
 config BR2_PACKAGE_NODEJS_VERSION_STRING
 	string
+<<<<<<< e5bb8c8563985155ad3ea58e9ca3e88b3a0873ef
 	default "0.10.39"	if BR2_BR2_PACKAGE_NODEJS_0_10_X
 	default "0.12.6"	if BR2_BR2_PACKAGE_NODEJS_0_12_X
+=======
+	default "0.10.39"	if BR2_BR2_PACKAGE_NODEJS_0_10_39
+	default "0.12.5"	if BR2_BR2_PACKAGE_NODEJS_0_12_5
+>>>>>>> 16cc55873ec6c0c28a1c2a5e1db617cdb8fad172
 
 menu "Module Selection"
 
