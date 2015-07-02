@@ -52,6 +52,82 @@ config BR2_PACKAGE_OPENCV_LIB_HIGHGUI
 	  Include opencv_highgui (high-level gui and media i/o) module into the
 	  OpenCV build.
 
+if BR2_PACKAGE_OPENCV_LIB_HIGHGUI
+
+choice
+	prompt "gui toolkit"
+	help
+	  GUI toolkit to be used by the opencv_highgui module.
+
+config BR2_PACKAGE_OPENCV_GUI_NONE
+	bool "none"
+
+config BR2_PACKAGE_OPENCV_WITH_GTK
+	bool "gtk2"
+	depends on BR2_PACKAGE_LIBGTK2
+
+comment "gtk2 support needs libgtk2"
+	depends on BR2_USE_MMU # libgtk2 -> glib2
+	depends on BR2_ARCH_HAS_ATOMICS # libgtk2 -> cairo
+	depends on !BR2_PACKAGE_LIBGTK2
+
+config BR2_PACKAGE_OPENCV_WITH_GTK3
+	bool "gtk3"
+	depends on BR2_PACKAGE_LIBGTK3
+
+comment "gtk3 support needs libgtk3"
+	depends on BR2_USE_MMU # libgtk3 -> glib2
+	depends on BR2_ARCH_HAS_ATOMICS # libgtk3 -> cairo
+	depends on !BR2_PACKAGE_LIBGTK3
+
+config BR2_PACKAGE_OPENCV_WITH_QT
+	bool "qt4"
+	depends on BR2_PACKAGE_QT
+	select BR2_PACKAGE_QT_STL
+	select BR2_PACKAGE_QT_GUI_MODULE
+	select BR2_PACKAGE_QT_TEST
+	help
+	  Use Qt4 with QtTest and QtGui modules and STL support, as GUI toolkit.
+
+comment "qt4 support needs qt"
+	depends on BR2_USE_MMU # qt
+	depends on !BR2_PACKAGE_QT && !BR2_PACKAGE_QT5
+
+config BR2_PACKAGE_OPENCV_WITH_QT5
+	bool "qt5"
+	depends on BR2_PACKAGE_QT5
+	select BR2_PACKAGE_QT5BASE
+	select BR2_PACKAGE_QT5BASE_CONCURRENT
+	select BR2_PACKAGE_QT5BASE_GUI
+	select BR2_PACKAGE_QT5BASE_WIDGETS
+	help
+	  Use Qt5 with base, concurrent, test, gui and widgets components, as GUI
+	  toolkit.
+
+comment "qt5 support needs qt5"
+	depends on !BR2_PACKAGE_QT && !BR2_PACKAGE_QT5
+
+endchoice
+
+config BR2_PACKAGE_OPENCV_WITH_OPENGL
+	bool "opengl support"
+	# OpenGL support done using Qt5OpenGL, so depends on WITH_QT5
+	depends on BR2_PACKAGE_OPENCV_WITH_QT5
+	# OpenGL support requires Qt5OpenGL with GL support, not GLES
+	depends on BR2_PACKAGE_QT5_GL_AVAILABLE
+	depends on BR2_PACKAGE_HAS_LIBGL
+	select BR2_PACKAGE_QT5BASE_OPENGL
+	help
+	  Enable OpenGL for UI.
+
+comment "opengl support needs an OpenGL provider"
+	depends on BR2_PACKAGE_OPENCV_WITH_QT5
+	depends on !BR2_PACKAGE_QT5_GL_AVAILABLE || \
+		!BR2_PACKAGE_HAS_LIBGL
+
+endif # BR2_PACKAGE_OPENCV_LIB_HIGHGUI
+
+
 config BR2_PACKAGE_OPENCV_LIB_IMGCODECS
 	bool "imgcodecs"
 	select BR2_PACKAGE_OPENCV_LIB_IMGPROC
@@ -173,8 +249,16 @@ config BR2_PACKAGE_OPENCV_WITH_FFMPEG
 	help
 	  Use ffmpeg from the target system.
 
+choice
+	prompt "gstreamer support"
+	help
+	  OpenCV prefers gstreamer-1 over gstreamer-0.10.
+
+config BR2_PACKAGE_OPENCV_WITHOUT_GSTREAMER
+	bool "none"
+
 config BR2_PACKAGE_OPENCV_WITH_GSTREAMER
-	bool "gstreamer support"
+	bool "gstreamer-0.10"
 	depends on BR2_USE_MMU # gstreamer -> libglib2
 	depends on BR2_USE_WCHAR # gstreamer -> libglib2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # gstreamer -> libglib2
@@ -182,20 +266,24 @@ config BR2_PACKAGE_OPENCV_WITH_GSTREAMER
 	select BR2_PACKAGE_GST_PLUGINS_BASE
 	select BR2_PACKAGE_GST_PLUGINS_BASE_PLUGIN_APP
 
-comment "gstreamer support needs a toolchain w/ wchar, threads"
+comment "gstreamer-0.10 support needs a toolchain w/ wchar, threads"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
 
-config BR2_PACKAGE_OPENCV_WITH_GTK
-	bool "gtk support"
-	depends on BR2_PACKAGE_XORG7
-	depends on BR2_USE_WCHAR # libgtk2 -> libglib2
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libgtk2 -> libglib2
-	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_USE_MMU # libgtk2 -> glib2
-	depends on BR2_ARCH_HAS_ATOMICS # libgtk2 -> cairo
-	depends on BR2_PACKAGE_OPENCV_LIB_HIGHGUI
-	select BR2_PACKAGE_LIBGTK2
+config BR2_PACKAGE_OPENCV_WITH_GSTREAMER1
+	bool "gstreamer-1.x"
+	depends on BR2_USE_MMU # gstreamer1 -> libglib2
+	depends on BR2_USE_WCHAR # gstreamer1 -> libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # gstreamer1 -> libglib2
+	select BR2_PACKAGE_GSTREAMER1
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_APP
+
+comment "gstreamer-1.x support needs a toolchain w/ wchar, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
+
+endchoice
 
 config BR2_PACKAGE_OPENCV_WITH_JASPER
 	bool "jpeg2000 support"
@@ -218,18 +306,6 @@ config BR2_PACKAGE_OPENCV_WITH_PNG
 	select BR2_PACKAGE_LIBPNG
 	help
 	  Use shared libpng from the target system.
-
-config BR2_PACKAGE_OPENCV_WITH_QT
-	bool "qt backend support"
-	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_USE_MMU # qt
-	depends on BR2_PACKAGE_OPENCV_LIB_HIGHGUI
-	select BR2_PACKAGE_QT
-	select BR2_PACKAGE_QT_STL
-	select BR2_PACKAGE_QT_GUI_MODULE
-	select BR2_PACKAGE_QT_TEST
-	help
-	  Use Qt with QtTest module and STL support
 
 config BR2_PACKAGE_OPENCV_WITH_TIFF
 	bool "tiff support"
