@@ -1,0 +1,100 @@
+config BR2_PACKAGE_IOJS
+	bool "iojs"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_arm || BR2_i386 || BR2_x86_64 || BR2_mipsel
+	depends on !BR2_MIPS_SOFT_FLOAT
+	# ARM needs BLX, so v5t+
+	depends on !BR2_ARM_CPU_ARMV4
+	# uses fork()
+	depends on BR2_USE_MMU
+	select BR2_PACKAGE_ZLIB
+	help
+	  Event-driven I/O server-side JavaScript environment based on V8.
+
+	  http://iojs.org/
+
+comment "IOjs needs a toolchain w/ C++, threads"
+	depends on BR2_USE_MMU
+	depends on BR2_arm || BR2_i386 || BR2_x86_64 || BR2_mipsel
+	depends on !BR2_ARM_CPU_ARMV4
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
+
+if BR2_PACKAGE_IOJS
+
+choice
+	prompt "IO.js version"
+	default BR2_BR2_PACKAGE_IOJS_2_3_3
+	help
+	  Select the version of io.js you wish to use.
+
+# V8 included with v2.3.3 requires at least ARMv6
+config BR2_BR2_PACKAGE_IOJS_2_3_3
+	bool "v2.3.3"
+	depends on !BR2_ARM_CPU_ARMV5
+
+endchoice
+
+config BR2_PACKAGE_IOJS_VERSION_STRING
+	string
+	default "2.3.3"	if BR2_BR2_PACKAGE_IOJS_2_3_3
+
+menu "Module Selection"
+
+config BR2_PACKAGE_IOJS_NPM
+	bool "NPM for the target"
+	select BR2_PACKAGE_OPENSSL
+	help
+	  NPM is the package manager for the IO JavaScript platform.
+	  Note that enabling NPM on the target also selects OpenSSL for the
+	  target.
+
+	  http://www.npmjs.org
+
+	  Note that NPM is always built for the buildroot host.
+
+config BR2_PACKAGE_IOJS_MODULES_EXPRESS
+	bool "Express web application framework"
+	help
+	  Express is a minimal and flexible IO.js web application
+	  framework, providing a robust set of features for building
+	  single and multi-page, and hybrid web applications.
+
+	  http://www.expressjs.com
+	  https://github.com/visionmedia/express
+
+config BR2_PACKAGE_IOJS_MODULES_COFFEESCRIPT
+	bool "CoffeeScript"
+	help
+	  CoffeeScript is a little language that compiles into JavaScript.
+
+	  http://www.coffeescript.org
+
+config BR2_PACKAGE_IOJS_MODULES_ADDITIONAL
+	string "Additional modules"
+	help
+	  List of space-separated IOjs modules to install via npm.
+	  See https://npmjs.org/ to find modules and 'npm help install'
+	  for available installation methods. For repeatable builds,
+	  download and save tgz files or clone git repos for the
+	  components you care about.
+
+	  Example: serialport uglify-js@1.3.4 /my/module/mymodule.tgz git://github.com/someuser/somemodule.git#v1.2
+
+	  This would install the serialport module (at the newest version),
+	  the uglify-js module at 1.3.4, a module from a filesystem path,
+	  and a module from a git repository.
+
+config BR2_PACKAGE_IOJS_MODULES_ADDITIONAL_DEPS
+	string "Additional module dependencies"
+	help
+	  List of space-separated buildroot recipes which must be built before
+	  your npms can be installed. For example, if in 'Additional modules'
+	  you specified 'IO-curl' (see:
+	  https://github.com/jiangmiao/IO-curl), you could then specify
+	  'libcurl' here, to ensure that buildroot builds the libcurl package,
+	  and does so before building your IO modules.
+
+endmenu
+
+endif
