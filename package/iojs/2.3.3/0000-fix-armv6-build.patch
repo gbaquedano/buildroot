@@ -1,0 +1,13 @@
+diff --git a/configure b/configure.new
+index ecade4f..d198d79 100755
+--- a/configure
++++ b/configure
+@@ -579,7 +579,7 @@ def configure_arm(o):
+     o['variables']['arm_fpu'] = 'vfpv3'
+     o['variables']['arm_version'] = '7'
+   else:
+-    o['variables']['arm_fpu'] = 'vfpv2'
++    o['variables']['arm_fpu'] = 'vfp'
+     o['variables']['arm_version'] = '6' if is_arch_armv6() else 'default'
+ 
+   o['variables']['arm_thumb'] = 0      # -marm

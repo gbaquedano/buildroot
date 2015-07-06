@@ -31,7 +31,7 @@ HOST_PYTHON_CONF_OPTS += 	\
 	--disable-gdbm		\
 	--disable-bsddb		\
 	--disable-test-modules	\
-	--disable-bz2		\
+#	--disable-bz2		\
 	--disable-ssl		\
 	--disable-ossaudiodev	\
 	--disable-pyo-build
