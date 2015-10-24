@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UPMPDCLI_VERSION = 0.11.0
+UPMPDCLI_VERSION = 0.12.0
 UPMPDCLI_SITE = http://www.lesbonscomptes.com/upmpdcli/downloads
 UPMPDCLI_LICENSE = GPLv2+
 UPMPDCLI_LICENSE_FILES = COPYING
@@ -19,7 +19,7 @@ ifeq ($(BR2_STATIC_LIBS),y)
 # manually pass it to make.
 UPMPDCLI_DEPENDENCIES += host-pkgconf
 UPMPDCLI_MAKE_OPTS = \
-	LIBS='$(shell $(PKG_CONFIG_HOST_BINARY) --libs expat libcurl libupnp)'
+	LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs expat libcurl libupnp`"
 endif
 
 # Upmpdcli only runs if user upmpdcli exists

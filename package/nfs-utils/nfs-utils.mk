@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-NFS_UTILS_VERSION = 1.2.6
-NFS_UTILS_SOURCE = nfs-utils-$(NFS_UTILS_VERSION).tar.bz2
-NFS_UTILS_SITE = http://downloads.sourceforge.net/project/nfs/nfs-utils/$(NFS_UTILS_VERSION)
+NFS_UTILS_VERSION = 1.3.3
+NFS_UTILS_SOURCE = nfs-utils-$(NFS_UTILS_VERSION).tar.xz
+NFS_UTILS_SITE = https://www.kernel.org/pub/linux/utils/nfs-utils/$(NFS_UTILS_VERSION)
 NFS_UTILS_LICENSE = GPLv2+
 NFS_UTILS_LICENSE_FILES = COPYING
 NFS_UTILS_AUTORECONF = YES
@@ -21,6 +21,7 @@ NFS_UTILS_CONF_OPTS = \
 	--disable-uuid \
 	--disable-ipv6 \
 	--without-tcp-wrappers \
+	--with-statedir=/run/nfs \
 	--with-rpcgen=internal
 
 NFS_UTILS_TARGETS_$(BR2_PACKAGE_NFS_UTILS_RPCDEBUG) += usr/sbin/rpcdebug
@@ -36,13 +37,40 @@ endif
 
 define NFS_UTILS_INSTALL_FIXUP
 	rm -f $(NFS_UTILS_TARGETS_)
+	touch $(TARGET_DIR)/etc/exports
 endef
-
 NFS_UTILS_POST_INSTALL_TARGET_HOOKS += NFS_UTILS_INSTALL_FIXUP
+
+ifeq ($(BR2_INIT_SYSTEMD),y)
+NFS_UTILS_CONF_OPTS += --with-systemd=/usr/lib/systemd/system
+NFS_UTILS_DEPENDENCIES += systemd
+else
+NFS_UTILS_CONF_OPTS += --without-systemd
+endif
 
 define NFS_UTILS_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/nfs-utils/S60nfs \
 		$(TARGET_DIR)/etc/init.d/S60nfs
+endef
+
+define NFS_UTILS_INSTALL_INIT_SYSTEMD
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+
+	ln -fs ../../../../usr/lib/systemd/system/nfs-server.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nfs-server.service
+	ln -fs ../../../../usr/lib/systemd/system/nfs-client.target \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/nfs-client.target
+
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/remote-fs.target.wants
+
+	ln -fs ../../../../usr/lib/systemd/system/nfs-client.target \
+		$(TARGET_DIR)/etc/systemd/system/remote-fs.target.wants/nfs-client.target
+
+	$(INSTALL) -D -m 0755 package/nfs-utils/nfs-utils_env.sh \
+		$(TARGET_DIR)/usr/lib/systemd/scripts/nfs-utils_env.sh
+
+	$(INSTALL) -D -m 0644 package/nfs-utils/nfs-utils_tmpfiles.conf \
+		$(TARGET_DIR)/usr/lib/tmpfiles.d/nfs-utils.conf
 endef
 
 define NFS_UTILS_REMOVE_NFSIOSTAT

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SANE_BACKENDS_VERSION = 1.0.24
-SANE_BACKENDS_SITE = https://alioth.debian.org/frs/download.php/file/3958
+SANE_BACKENDS_VERSION = 1.0.25
+SANE_BACKENDS_SITE = https://alioth.debian.org/frs/download.php/file/4146
 SANE_BACKENDS_CONFIG_SCRIPTS = sane-config
 SANE_BACKENDS_LICENSE = GPLv2+
 SANE_BACKENDS_LICENSE_FILES = COPYING
@@ -39,6 +39,7 @@ SANE_BACKENDS_CONF_OPTS += --enable-avahi
 endif
 
 ifeq ($(BR2_PACKAGE_NETSNMP),y)
+SANE_BACKENDS_CONF_ENV += ac_cv_path_SNMP_CONFIG_PATH=$(STAGING_DIR)/usr/bin/net-snmp-config
 SANE_BACKENDS_DEPENDENCIES += netsnmp
 else
 SANE_BACKENDS_CONF_OPTS += --without-snmp

@@ -203,6 +203,10 @@ else
 QT_CONFIGURE_OPTS += -static
 endif
 
+ifeq ($(BR2_STATIC_LIBS),y)
+QT_CONFIGURE_OPTS += -D QT_NO_DYNAMIC_LIBRARY
+endif
+
 ifeq ($(BR2_ENDIAN),"LITTLE")
 QT_CONFIGURE_OPTS += -little-endian
 else
@@ -230,9 +234,9 @@ QT_DEPENDENCIES += fontconfig xlib_libXi xlib_libX11 xlib_libXrender \
 	xlib_libXcursor xlib_libXrandr xlib_libXext xlib_libXv
 # Using pkg-config avoids us some logic to redefine and sed again mkspecs files
 # to add X11 include path and link options
-QT_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags x11)
-QT_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags x11)
-QT_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs x11 xext)
+QT_CFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags x11`
+QT_CXXFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags x11`
+QT_LDFLAGS += `$(PKG_CONFIG_HOST_BINARY) --libs x11 xext`
 QT_CONFIGURE_OPTS += -arch $(QT_EMB_PLATFORM) \
 		-xplatform qws/linux-$(QT_EMB_PLATFORM)-g++ -x11 -no-gtkstyle -no-sm \
 		-no-openvg
@@ -329,9 +333,9 @@ endif
 ifeq ($(BR2_PACKAGE_QT_OPENGL_ES),y)
 QT_CONFIGURE_OPTS += -opengl es2 -egl
 QT_DEPENDENCIES += libgles libegl
-QT_CFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags egl)
-QT_CXXFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --cflags egl)
-QT_LDFLAGS += $(shell $(PKG_CONFIG_HOST_BINARY) --libs egl)
+QT_CFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags egl`
+QT_CXXFLAGS += `$(PKG_CONFIG_HOST_BINARY) --cflags egl`
+QT_LDFLAGS += `$(PKG_CONFIG_HOST_BINARY) --libs egl`
 else
 QT_CONFIGURE_OPTS += -no-opengl
 endif
@@ -473,7 +477,7 @@ QT_QMAKE = $(HOST_DIR)/usr/bin/qmake -spec qws/linux-$(QT_EMB_PLATFORM)-g++
 ################################################################################
 define QT_QMAKE_SET
 	$(SED) '/$(1)/d' $(3)/mkspecs/qws/linux-$(QT_EMB_PLATFORM)-g++/qmake.conf
-	$(SED) '/include.*qws.conf/a$(1) = $(2)' $(3)/mkspecs/qws/linux-$(QT_EMB_PLATFORM)-g++/qmake.conf
+	$(SED) "/include.*qws.conf/a$(1) = $(2)" $(3)/mkspecs/qws/linux-$(QT_EMB_PLATFORM)-g++/qmake.conf
 endef
 
 ifneq ($(QT_CONFIG_FILE),)

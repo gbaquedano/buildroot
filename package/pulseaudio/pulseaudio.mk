@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PULSEAUDIO_VERSION = 5.0
+PULSEAUDIO_VERSION = 7.0
 PULSEAUDIO_SOURCE = pulseaudio-$(PULSEAUDIO_VERSION).tar.xz
 PULSEAUDIO_SITE = http://freedesktop.org/software/pulseaudio/releases
 PULSEAUDIO_INSTALL_STAGING = YES
@@ -12,7 +12,6 @@ PULSEAUDIO_LICENSE = LGPLv2.1+ (specific license for modules, see LICENSE file)
 PULSEAUDIO_LICENSE_FILES = LICENSE GPL LGPL
 PULSEAUDIO_CONF_OPTS = \
 	--disable-default-build-tests \
-	--disable-legacy-runtime-dir \
 	--disable-legacy-database-entry-format \
 	--disable-manpages
 
@@ -121,6 +120,14 @@ endef
 define PULSEAUDIO_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/pulseaudio/S50pulseaudio \
 		$(TARGET_DIR)/etc/init.d/S50pulseaudio
+endef
+
+define PULSEAUDIO_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/pulseaudio/pulseaudio.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/pulseaudio.service
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	ln -sf ../../../../usr/lib/systemd/system/pulseaudio.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/pulseaudio.service
 endef
 
 endif

@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-MPLAYER_VERSION = 1.1.1
+MPLAYER_VERSION = 1.2
 MPLAYER_SOURCE = MPlayer-$(MPLAYER_VERSION).tar.xz
 MPLAYER_SITE = http://www.mplayerhq.hu/MPlayer/releases
-
+MPLAYER_DEPENDENCIES = host-pkgconf
+MPLAYER_LICENSE = GPLv2
+MPLAYER_LICENSE_FILES = LICENSE Copyright
 MPLAYER_CFLAGS = $(TARGET_CFLAGS)
 MPLAYER_LDFLAGS = $(TARGET_LDFLAGS)
-
-MPLAYER_DEPENDENCIES += host-pkgconf
 
 # mplayer needs pcm+mixer support, but configure fails to check for it
 ifeq ($(BR2_PACKAGE_ALSA_LIB)$(BR2_PACKAGE_ALSA_LIB_MIXER)$(BR2_PACKAGE_ALSA_LIB_PCM),yyy)
@@ -25,6 +25,19 @@ ifeq ($(BR2_ENDIAN),"BIG")
 MPLAYER_CONF_OPTS += --enable-big-endian
 else
 MPLAYER_CONF_OPTS += --disable-big-endian
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+MPLAYER_DEPENDENCIES += zlib
+MPLAYER_CONF_OPTS += \
+	--enable-decoder=apng \
+	--enable-encoder=apng \
+	--enable-decoder=tdsc
+else
+MPLAYER_CONF_OPTS += \
+	--disable-decoder=apng \
+	--disable-encoder=apng \
+	--disable-decoder=tdsc
 endif
 
 ifeq ($(BR2_PACKAGE_SDL),y)
@@ -107,7 +120,6 @@ MPLAYER_CONF_OPTS += --disable-libcdio
 ifeq ($(BR2_PACKAGE_LIBDVDREAD),y)
 MPLAYER_CONF_OPTS +=  \
 	--enable-dvdread \
-	--disable-dvdread-internal \
 	--with-dvdread-config=$(STAGING_DIR)/usr/bin/dvdread-config
 MPLAYER_DEPENDENCIES += libdvdread
 endif
@@ -160,7 +172,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_TREMOR),y)
 MPLAYER_DEPENDENCIES += tremor
-MPLAYER_CONF_OPTS += --disable-tremor-internal --enable-tremor
+MPLAYER_CONF_OPTS += --enable-tremor
 endif
 
 ifeq ($(BR2_PACKAGE_LIBVORBIS),y)
@@ -220,7 +232,10 @@ MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBTHEORA),libtheora)
 MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBPNG),libpng)
 MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_JPEG),jpeg)
 MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_XLIB_LIBX11),xlib_libX11)
+MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_XLIB_LIBXEXT),xlib_libXext)
+MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_XLIB_LIBXINERAMA),xlib_libXinerama)
 MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_XLIB_LIBXV),xlib_libXv)
+MPLAYER_DEPENDENCIES += $(if $(BR2_PACKAGE_XLIB_LIBXXF86VM),xlib_libXxf86vm)
 
 # ARM optimizations
 ifeq ($(BR2_ARM_CPU_ARMV5),y)
