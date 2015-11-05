@@ -228,14 +228,12 @@ ifndef KBUILD_VERBOSE
 endif
 
 ifeq ($(KBUILD_VERBOSE),1)
-  quiet =
   Q =
 ifndef VERBOSE
   VERBOSE = 1
 endif
 export VERBOSE
 else
-  quiet = quiet_
   Q = @
 endif
 
@@ -247,7 +245,7 @@ SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 # kconfig uses CONFIG_SHELL
 CONFIG_SHELL := $(SHELL)
 
-export SHELL CONFIG_SHELL quiet Q KBUILD_VERBOSE
+export SHELL CONFIG_SHELL Q KBUILD_VERBOSE
 
 ifndef HOSTAR
 HOSTAR := ar
@@ -336,6 +334,7 @@ unexport O
 GNU_HOST_NAME := $(shell support/gnuconfig/config.guess)
 
 PACKAGES :=
+PACKAGES_ALL :=
 
 # silent mode requested?
 QUIET := $(if $(findstring s,$(filter-out --%,$(MAKEFLAGS))),-q)
@@ -845,7 +844,7 @@ ifeq ($(O),output)
 	rm -rf $(O)
 endif
 	rm -rf $(BR2_CONFIG) $(CONFIG_DIR)/.config.old $(CONFIG_DIR)/..config.tmp \
-		$(CONFIG_DIR)/.auto.deps
+		$(CONFIG_DIR)/.auto.deps $(BR2_EXTERNAL_FILE)
 
 help:
 	@echo 'Cleaning:'
