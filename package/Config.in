@@ -28,6 +28,7 @@ menu "Audio and video applications"
 	source "package/mpg123/Config.in"
 	source "package/mplayer/Config.in"
 	source "package/musepack/Config.in"
+	source "package/netflix/Config.in"
 	source "package/ncmpc/Config.in"
 	source "package/on2-8170-libs/Config.in"
 	source "package/opus-tools/Config.in"
@@ -135,6 +136,7 @@ endif
 	source "package/jq/Config.in"
 	source "package/libtool/Config.in"
 	source "package/make/Config.in"
+	source "package/ninja/Config.in"
 if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	source "package/patch/Config.in"
 endif
@@ -146,6 +148,11 @@ endif
 	source "package/subversion/Config.in"
 	source "package/tree/Config.in"
 	source "package/yasm/Config.in"
+endmenu
+
+menu "Digital rights management"
+	source "package/dxdrm/Config.in"
+	source "package/playready/Config.in"
 endmenu
 
 menu "Filesystem and flash utilities"
@@ -270,6 +277,7 @@ comment "QT libraries and helper libraries"
 	source "package/qwt/Config.in"
 endif
 	source "package/weston/Config.in"
+	source "package/wpe-launcher/Config.in"
 	source "package/x11r7/Config.in"
 
 comment "X applications"
@@ -321,6 +329,7 @@ endmenu
 	source "package/am335x-pru-package/Config.in"
 	source "package/avrdude/Config.in"
 	source "package/bcache-tools/Config.in"
+	source "package/bcm-refsw/Config.in"
 	source "package/biosdevname/Config.in"
 	source "package/cc-tool/Config.in"
 	source "package/cdrkit/Config.in"
@@ -355,6 +364,7 @@ endif
 	source "package/gpm/Config.in"
 	source "package/gpsd/Config.in"
 	source "package/gptfdisk/Config.in"
+	source "package/greenpeak/Config.in"
 	source "package/gvfs/Config.in"
 if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	source "package/hdparm/Config.in"
@@ -386,6 +396,7 @@ endif
 	source "package/minicom/Config.in"
 	source "package/nanocom/Config.in"
 	source "package/neard/Config.in"
+	source "package/nouveau-drm/Config.in"
 	source "package/nvidia-driver/Config.in"
 	source "package/nvidia-tegra23/Config.in"
 	source "package/ofono/Config.in"
@@ -858,6 +869,7 @@ menu "Graphics"
 	source "package/webkit/Config.in"
 	source "package/webkitgtk24/Config.in"
 	source "package/webp/Config.in"
+	source "package/wpe/Config.in"
 	source "package/zxing-cpp/Config.in"
 endmenu
 
@@ -1081,6 +1093,7 @@ menu "Other"
 	source "package/clapack/Config.in"
 	source "package/classpath/Config.in"
 	source "package/cppcms/Config.in"
+	source "package/cppsdk/Config.in"
 	source "package/dawgdic/Config.in"
 	source "package/ding-libs/Config.in"
 	source "package/eigen/Config.in"
@@ -1537,6 +1550,7 @@ if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	source "package/tar/Config.in"
 endif
 	source "package/util-linux/Config.in"
+	source "package/webbridge/Config.in"
 endmenu
 
 menu "Text editors and viewers"
