@@ -4,10 +4,9 @@
 #
 ################################################################################
 
-BCM_REFSW_VERSION = 20150619
-BCM_REFSW_SOURCE = refsw_release_unified_$(BCM_REFSW_VERSION).src.tar.xz
-BCM_REFSW_SITE = file://../bcm-refsw
-BCM_REFSW_STRIP_COMPONENTS = 0
+BCM_REFSW_VERSION = 15.2
+BCM_REFSW_SITE = git@github.com:Metrological/bcm-refsw.git
+BCM_REFSW_SITE_METHOD = git
 BCM_REFSW_DEPENDENCIES = linux host-pkgconf host-flex host-bison host-gperf
 BCM_REFSW_LICENSE = PROPRIETARY
 BCM_REFSW_INSTALL_STAGING = YES
@@ -22,7 +21,7 @@ BCM_REFSW_PLATFORM_VC = vc5
 else ifeq ($(BR2_mipsel),y)
 BCM_REFSW_PLATFORM = 97429
 BCM_REFSW_PLATFORM_REV = B0
-BCM_REFSW_PLATFORM_VC = vc4
+BCM_REFSW_PLATFORM_VC = v3d
 endif
 
 BCM_REFSW_CONF_OPTS += \
@@ -78,6 +77,13 @@ define BCM_REFSW_INSTALL_LIBS
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
 endef
 
+ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
+define BCM_REFSW_INSTALL_EXTRA
+	$(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $1/etc/init.d/S11wakeup
+	$(INSTALL) -m 644 -D $(BCM_REWSW_BIN)/wakeup_drv.ko $1/lib/modules/wakeup_drv.ko
+endef
+endif
+
 define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NEXUS)
 	$(BCM_REFSW_BUILD_VCX)
@@ -104,9 +110,8 @@ endef
 define BCM_REFSW_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 750 -D $(BCM_REWSW_BIN)/nexus $(TARGET_DIR)/sbin/nexus
 	$(INSTALL) -m 644 -D $(BCM_REWSW_BIN)/nexus.ko $(TARGET_DIR)/lib/modules/nexus.ko
-    $(INSTALL) -m 644 -D $(BCM_REWSW_BIN)/wakeup_drv.ko $(TARGET_DIR)/lib/modules/wakeup_drv.ko
 	$(INSTALL) -D -m 755 package/bcm-refsw/S11nexus $(TARGET_DIR)/etc/init.d/S11nexus
-	$(INSTALL) -D -m 755 package/bcm-refsw/S11wakeup $(TARGET_DIR)/etc/init.d/S11wakeup
+	$(call BCM_REFSW_INSTALL_EXTRA,$(TARGET_DIR))
 	$(call BCM_REFSW_INSTALL_LIBS,$(TARGET_DIR))
 endef
 
