@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 0bf59fc379ae87ceb26ac36d55b75e7a1d80bfa5
+WPE_VERSION = a1bac59755ccd868b5110a701895872bb3f8821a
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -24,11 +24,6 @@ endif
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
 WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
-endif
-
-ifeq ($(BR2_mipsel),y)
-WPE_FLAGS += \
-	-DENABLE_JIT=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
