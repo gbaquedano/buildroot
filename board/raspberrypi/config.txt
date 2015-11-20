@@ -41,7 +41,7 @@ gpu_mem_1024=396
 
 kernel=zImage
 #kernel=zImage-dt
-initramfs rootfs.cpio.xz
+#initramfs rootfs.cpio.xz
 
 ################################################################################
 #
@@ -49,9 +49,10 @@ initramfs rootfs.cpio.xz
 #
 ################################################################################
 
-device_tree=
-#dtparam=spi=on
-#dtoverlay=spi-bcm2708
+device_tree=bcm2709-rpi-2-b.dtb
+dtparam=spi=on
+dtoverlay=spi-bcm2835
+dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=25
 
 ################################################################################
 #
