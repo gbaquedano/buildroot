@@ -3,7 +3,7 @@
 # gst1-bcm
 #
 ################################################################################
-GST1_BCM_VERSION = f0ea3d4c08a63f78d3f5b832cda10b34182f27ae
+GST1_BCM_VERSION = 726bbcf894a59aefdeee0a9179eb4927d7907bb3
 GST1_BCM_SITE = git@github.com:Metrological/gstreamer-plugins-soc.git
 GST1_BCM_SITE_METHOD = git
 GST1_BCM_LICENSE = PROPRIETARY
@@ -13,7 +13,7 @@ GST1_BCM_AUTORECONF = YES
 
 GST1_BCM_CONF_ENV += \
 	$(BCM_REFSW_MAKE_ENV) \
-	GSTREAMER_REFSW_SERVER_NXCLIENT_SUPPORT=n \
+	GSTREAMER_REFSW_SERVER_NXCLIENT_SUPPORT=y \
 	PKG_CONFIG_SYSROOT_DIR=$(STAGING_DIR)
 
 GST1_BCM_MAKE_ENV += \
@@ -23,7 +23,9 @@ GST1_BCM_MAKE_ENV += \
 GST1_BCM_MAKE_OPTS += "\
 	CFLAGS+=${CFLAGS} \
 		-std=c99 \
-		-I${BCM_REWSW_BIN}/include"
+		-I${BCM_REWSW_BIN}/include \
+		-I${BCM_REFSW_DIR}/BSEAV/api/include \
+		-I${BCM_REFSW_DIR}/BSEAV/lib/media/"
 
 GST1_BCM_CONF_OPTS = \
 	--enable-gstreamer1  \
@@ -45,7 +47,8 @@ GST1_BCM_CONF_OPTS = \
 	--disable-transcode \
 	--disable-tsdemux \
 	--disable-tsparse \
-	--disable-playersinkbin
+	--disable-playersinkbin \
+	--disable-gfxsink
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_AUDFILTER),y)
 GST1_BCM_CONF_OPTS += --enable-audfilter
@@ -63,12 +66,6 @@ ifeq ($(BR2_PACKAGE_GST1_BCM_AUDIOSINK),y)
 GST1_BCM_CONF_OPTS += --enable-audiosink
 else
 GST1_BCM_CONF_OPTS += --disable-audiosink
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_BCM_GFXSINK),y)
-GST1_BCM_CONF_OPTS += --enable-gfxsink
-else
-GST1_BCM_CONF_OPTS += --disable-gfxsink
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_BCM_VIDEODECODE),y)

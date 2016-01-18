@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-GST1_PLUGINS_GOOD_VERSION = 1.6.1
+GST1_PLUGINS_GOOD_VERSION = 1.6.2
 GST1_PLUGINS_GOOD_SOURCE = gst-plugins-good-$(GST1_PLUGINS_GOOD_VERSION).tar.xz
 GST1_PLUGINS_GOOD_SITE = http://gstreamer.freedesktop.org/src/gst-plugins-good
 GST1_PLUGINS_GOOD_LICENSE_FILES = COPYING
 GST1_PLUGINS_GOOD_LICENSE = LGPLv2.1+
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GST1_PLUGINS_GOOD_VERSION = 7ef9dd37610d1b8e94c7144e546be28674fce148
+GST1_PLUGINS_GOOD_VERSION = e618444ca7bca66cf9e018844cc46fd6d58bf7a7
 GST1_PLUGINS_GOOD_SOURCE = gst-plugins-good-$(GST1_PLUGINS_GOOD_VERSION).tar.xz
 GST1_PLUGINS_GOOD_SITE = http://cgit.freedesktop.org/gstreamer/gst-plugins-good/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST1_PLUGINS_GOOD_SOURCE)

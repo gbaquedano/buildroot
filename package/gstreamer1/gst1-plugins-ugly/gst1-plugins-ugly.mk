@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_UGLY_VERSION = 1.6.1
+GST1_PLUGINS_UGLY_VERSION = 1.6.2
 GST1_PLUGINS_UGLY_SOURCE = gst-plugins-ugly-$(GST1_PLUGINS_UGLY_VERSION).tar.xz
 GST1_PLUGINS_UGLY_SITE = http://gstreamer.freedesktop.org/src/gst-plugins-ugly
 GST1_PLUGINS_UGLY_LICENSE_FILES = COPYING
@@ -12,7 +12,7 @@ GST1_PLUGINS_UGLY_LICENSE_FILES = COPYING
 GST1_PLUGINS_UGLY_LICENSE = LGPLv2.1+
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GST1_PLUGINS_UGLY_VERSION = cc2c53bdde6be3d8d400ec9772c78979b8691aa9
+GST1_PLUGINS_UGLY_VERSION = 59f5866cd28ef8ac4bb81bcf3eacbf9e6bc947dd
 GST1_PLUGINS_UGLY_SOURCE = gst-plugins-ugly-$(GST1_PLUGINS_UGLY_VERSION).tar.xz
 GST1_PLUGINS_UGLY_SITE = http://cgit.freedesktop.org/gstreamer/gst-plugins-ugly/snapshot
 BR_NO_CHECK_HASH_FOR += $(GST1_PLUGINS_UGLY_SOURCE)

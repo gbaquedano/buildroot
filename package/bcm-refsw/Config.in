@@ -16,4 +16,10 @@ config BR2_PACKAGE_PROVIDES_LIBEGL
 config BR2_PACKAGE_PROVIDES_LIBGLES
 	default "bcm-refsw"
 
+config BR2_PACKAGE_BCM_REFSW_EGLCUBE
+	bool "eglcube"
+	default n
+	help
+	  Build the EGL cube example, just for test and fun.
+
 endif

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPE_VERSION = 4d683a0be07827556707c5c61920f2b1d1a745c9
+WPE_VERSION = 81d97b8bbaa21da63650a2b5b5cdbc53469b8714
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
@@ -26,19 +26,36 @@ WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
 endif
 
-ifeq ($(BR2_PACKAGE_WAYLAND),y)
-WPE_DEPENDENCIES += wayland
-WPE_FLAGS += -DUSE_WPE_BACKEND_WAYLAND=ON
-else ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
+WPE_FLAGS = \
+	-DENABLE_ACCELERATED_2D_CANVAS=ON \
+	-DENABLE_GEOLOCATION=ON
+
+ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_BCM_RPI=ON
 else ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_BCM_NEXUS=ON
-else ifeq ($(BR2_PACKAGE_LIBDRM),y)
+else
+ifeq ($(BR2_PACKAGE_WAYLAND),y)
+WPE_DEPENDENCIES += wayland
+WPE_FLAGS += -DUSE_WPE_BACKEND_WAYLAND=ON
+endif
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
 WPE_DEPENDENCIES += libdrm
 WPE_FLAGS += -DUSE_WPE_BACKEND_DRM=ON
+ifeq ($(BR2_PACKAGE_LIBDRM_TEGRA),y)
+WPE_FLAGS += -DUSE_WPE_BACKEND_DRM_TEGRA=ON
+endif
+endif
 ifeq ($(BR2_PACKAGE_XLIB_LIBX11),)
 WPE_EXTRA_CFLAGS += -DMESA_EGL_NO_X11_HEADERS
 endif
+endif
+ifeq ($(BR2_PACKAGE_HORIZON_SDK),y)
+WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_ENABLE_LOGGING),y)
+WPE_EXTRA_CFLAGS += -DLOG_DISABLED=0
 endif
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
@@ -76,9 +93,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V1),y)
 WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA=ON
-endif
-
-ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2),y)
+else ifeq ($(BR2_PACKAGE_WPE_USE_ENCRYPTED_MEDIA_V2),y)
 WPE_FLAGS += -DENABLE_ENCRYPTED_MEDIA_V2=ON
 endif
 
@@ -88,6 +103,11 @@ WPE_FLAGS += -DENABLE_DXDRM=ON
 ifeq ($(BR2_PACKAGE_DXDRM_EXTERNAL),y)
 WPE_FLAGS += -DENABLE_PROVISIONING=ON
 endif
+endif
+
+ifeq ($(BR2_PACKAGE_OPENWEBRTC),y)
+WPE_DEPENDENCIES += openwebrtc
+WPE_FLAGS += -DENABLE_MEDIA_STREAM=ON
 endif
 
 ifeq ($(BR2_PACKAGE_WPE_USE_GSTREAMER_GL),y)
@@ -114,20 +134,16 @@ define WPE_BUILD_CMDS
 endef
 
 define WPE_INSTALL_STAGING_CMDS
-	(pushd $(WPE_BUILDDIR) && \
-	cp bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
-	cp -d lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P Source/WebKit2/cmake_install.cmake && \
-	popd > /dev/null )
-
+	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
+	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
+	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null )
 endef
 
 define WPE_INSTALL_TARGET_CMDS
-	(pushd $(WPE_BUILDDIR) > /dev/null && \
-	cp bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
-	cp -d lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.1 && \
-	popd > /dev/null)
+	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
+	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
+	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*)
 endef
 endif
 
