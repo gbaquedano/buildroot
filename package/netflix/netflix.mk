@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETFLIX_VERSION = 9600887bb2b2ed82370bfee3aed8eb6b70feb3d0
+NETFLIX_VERSION = 7f1d5c1180429cbf509461a93e07724724a8b1ff
 NETFLIX_SITE = git@github.com:Metrological/netflix.git
 NETFLIX_SITE_METHOD = git
 NETFLIX_LICENSE = PROPRIETARY
@@ -37,6 +37,11 @@ NETFLIX_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=rpi-egl \
 	-DGIBBON_PLATFORM=rpi
 NRD_DEPENDENCIES += rpi-userland
+else ifeq ($(BR2_PACKAGE_BCM_REFSW),y)
+NETFLIX_CONF_OPTS += \
+	-DGIBBON_GRAPHICS=nexus \
+	-DGIBBON_PLATFORM=posix
+NRD_DEPENDENCIES += bcm-refsw
 else ifeq ($(BR2_PACKAGE_HAS_LIBEGL)$(BR2_PACKAGE_HAS_LIBGLES),yy)
 NETFLIX_CONF_OPTS += \
 	-DGIBBON_GRAPHICS=gles2-egl \

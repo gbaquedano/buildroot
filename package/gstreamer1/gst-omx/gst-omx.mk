@@ -23,6 +23,8 @@ endif
 GST_OMX_LICENSE = LGPLv2.1
 GST_OMX_LICENSE_FILES = COPYING
 
+GST_OMX_DEPENDENCIES = gstreamer1 gst1-plugins-base libopenmax
+
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 GST_OMX_CONF_OPTS = \
 	--with-omx-target=rpi
@@ -31,6 +33,7 @@ GST_OMX_CONF_ENV = \
 		-I$(STAGING_DIR)/usr/include/IL \
 		-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
 		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
+GST_OMX_DEPENDENCIES += gst1-plugins-bad
 endif
 
 ifeq ($(BR2_PACKAGE_BELLAGIO),y)
@@ -46,8 +49,6 @@ endif
 
 GST_OMX_CONF_OPTS += \
 	--disable-examples
-
-GST_OMX_DEPENDENCIES = gstreamer1 gst1-plugins-base libopenmax
 
 # adjust library paths to where buildroot installs them
 define GST_OMX_FIXUP_CONFIG_PATHS
