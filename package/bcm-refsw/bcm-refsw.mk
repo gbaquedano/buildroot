@@ -18,10 +18,12 @@ ifeq ($(BR2_arm),y)
 BCM_REFSW_PLATFORM = 97439
 BCM_REFSW_PLATFORM_REV = B0
 BCM_REFSW_PLATFORM_VC = vc5
+BCM_REFSW_MAKE_ENV += NEXUS_ENDIAN=BSTD_ENDIAN_LITTLE
 else ifeq ($(BR2_mipsel),y)
 BCM_REFSW_PLATFORM = 97429
 BCM_REFSW_PLATFORM_REV = B0
 BCM_REFSW_PLATFORM_VC = v3d
+BCM_REFSW_MAKE_ENV += NEXUS_ENDIAN=BSTD_ENDIAN_BIG
 endif
 
 BCM_REFSW_CONF_OPTS += \
@@ -102,7 +104,6 @@ define BCM_REFSW_INSTALL_LIBS
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxpl.so $1/usr/lib/libnxpl.so
 	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
 	cd $1/usr/lib && ln -sf libv3ddriver.so libEGL.so && ln -sf libv3ddriver.so libGLESv2.so
-	
 endef
 
 ifeq ($(BCM_REFSW_PLATFORM_VC),vc5)
@@ -115,19 +116,23 @@ endif
 define BCM_REFSW_INSTALL_STAGING_NXSERVER
 	   $(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
 endef
-define BCM_REFSW_INSTALL_TARGET_NXSERVER
-	   $(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
-	   #install nxserver if webbridge nxresourcecenter plugin is not chosen.
-	   if [ "x$(BR2_PACKAGE_PLUGIN_NXRESOURCECENTER)" = "x" ]  ; then \
-		 $(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver; \
-		 $(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver; \
-	   fi
-endef
 
-ifeq ($(BR2_PACKAGE_BCM_REFSW_EGLCUBE),y)
-define BCM_REFSW_INSTALL_TARGET_EGLCUBE
+ifeq ($(BR2_PACKAGE_BCM_WESTON),y)
+define BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT
+endef
+else
+define BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT
+	$(INSTALL) -D -m 755 package/bcm-refsw/S70nxserver $(TARGET_DIR)/etc/init.d/S70nxserver;
 endef
 endif
+
+define BCM_REFSW_INSTALL_TARGET_NXSERVER
+	$(INSTALL) -D $(BCM_REFSW_BIN)/libnxclient.so $1/usr/lib/libnxclient.so
+	if [ "x$(BR2_PACKAGE_PLUGIN_NXRESOURCECENTER)" = "x" ]; then \
+		$(INSTALL) -m 755 -D $(BCM_REFSW_BIN)/nxserver $1/usr/bin/nxserver; \
+		$(BCM_REFSW_INSTALL_TARGET_NXSERVER_INIT) \
+	fi
+endef
 
 define BCM_REFSW_BUILD_CMDS
 	$(BCM_REFSW_BUILD_NEXUS)

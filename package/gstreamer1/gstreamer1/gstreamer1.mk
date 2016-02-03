@@ -12,7 +12,7 @@ GSTREAMER1_LICENSE_FILES = COPYING
 GSTREAMER1_LICENSE = LGPLv2+, LGPLv2.1+
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GSTREAMER1_VERSION = 9f36b4383bb5dc09095f6409c413d1c2c2f0e983
+GSTREAMER1_VERSION = ca97a9882f79bbefd14bd5bcda572c3dab08db32
 GSTREAMER1_SOURCE = gstreamer-$(GSTREAMER1_VERSION).tar.xz
 GSTREAMER1_SITE = http://cgit.freedesktop.org/gstreamer/gstreamer/snapshot
 BR_NO_CHECK_HASH_FOR += $(GSTREAMER1_SOURCE)
@@ -58,8 +58,8 @@ endif
 # updated to look in the correct location.
 # Add a symlink to the legacy location
 define GSTREAMER1_LEGACY_CGSTCONFIG_H
-	ln -sf $(STAGING_DIR)/usr/lib/gstreamer-1.0/include/gst/gstconfig.h \
-	       $(STAGING_DIR)/usr/include/gstreamer-1.0/gst/gstconfig.h
+	cd $(STAGING_DIR)/usr/include/gstreamer-1.0/gst && \
+		ln -sf ../../../lib/gstreamer-1.0/include/gst/gstconfig.h .
 endef
 GSTREAMER1_POST_INSTALL_STAGING_HOOKS += GSTREAMER1_LEGACY_CGSTCONFIG_H
 

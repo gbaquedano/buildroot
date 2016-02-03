@@ -5,11 +5,16 @@ comment "Kernel Header Options"
 
 choice
 	prompt "Kernel Headers"
+	default BR2_KERNEL_HEADERS_AS_KERNEL if BR2_LINUX_KERNEL
 	default BR2_KERNEL_HEADERS_4_4
 	help
 	  Select the version of kernel header files you wish to use.
 	  You must select the correct set of header files to match
 	  the kernel you intend to use on your target system.
+
+	config BR2_KERNEL_HEADERS_AS_KERNEL
+		bool "Same as kernel"
+		depends on BR2_LINUX_KERNEL
 
 	config BR2_KERNEL_HEADERS_3_2
 		bool "Linux 3.2.x kernel headers"
@@ -87,7 +92,7 @@ config BR2_DEFAULT_KERNEL_VERSION
 
 choice
 	bool "Custom kernel headers series"
-	depends on BR2_KERNEL_HEADERS_VERSION
+	depends on BR2_KERNEL_HEADERS_VERSION || BR2_KERNEL_HEADERS_AS_KERNEL
 	default BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_REALLY_OLD
 	help
 	  Set to the kernel headers series you manually set above.
@@ -202,17 +207,17 @@ endchoice
 
 config BR2_DEFAULT_KERNEL_HEADERS
 	string
-	default "3.2.75"	if BR2_KERNEL_HEADERS_3_2
+	default "3.2.76"	if BR2_KERNEL_HEADERS_3_2
 	default "3.4.110"	if BR2_KERNEL_HEADERS_3_4
-	default "3.10.94"	if BR2_KERNEL_HEADERS_3_10
-	default "3.12.52"	if BR2_KERNEL_HEADERS_3_12
-	default "3.14.58"	if BR2_KERNEL_HEADERS_3_14
+	default "3.10.96"	if BR2_KERNEL_HEADERS_3_10
+	default "3.12.53"	if BR2_KERNEL_HEADERS_3_12
+	default "3.14.60"	if BR2_KERNEL_HEADERS_3_14
 	default "3.17.8"	if BR2_KERNEL_HEADERS_3_17
-	default "3.18.25"	if BR2_KERNEL_HEADERS_3_18
+	default "3.18.26"	if BR2_KERNEL_HEADERS_3_18
 	default "3.19.8"	if BR2_KERNEL_HEADERS_3_19
 	default "4.0.9"		if BR2_KERNEL_HEADERS_4_0
-	default "4.1.15"	if BR2_KERNEL_HEADERS_4_1
+	default "4.1.17"	if BR2_KERNEL_HEADERS_4_1
 	default "4.2.8"		if BR2_KERNEL_HEADERS_4_2
-	default "4.3.3"		if BR2_KERNEL_HEADERS_4_3
-	default "4.4"		if BR2_KERNEL_HEADERS_4_4
+	default "4.3.5"		if BR2_KERNEL_HEADERS_4_3
+	default "4.4.1"		if BR2_KERNEL_HEADERS_4_4
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
