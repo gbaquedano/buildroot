@@ -44,13 +44,10 @@ kernel=zImage
 #
 ################################################################################
 
-device_tree=
-#dtparam=i2c_arm=on
-#dtparam=spi=on
-#dtparam=i2s=on
-#dtoverlay=mmc
-#dtoverlay=spi-bcm2708
-#dtoverlay=rpi-ft5406
+device_tree=bcm2709-rpi-2-b.dtb
+dtparam=spi=on
+dtoverlay=spi-bcm2835
+dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=25
 
 ################################################################################
 #
