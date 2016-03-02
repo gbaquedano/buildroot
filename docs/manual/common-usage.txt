@@ -212,9 +212,10 @@ The +graph-depends+ behaviour can be controlled by setting options in the
   default, +0+, means no limit.
 
 * +--stop-on PKG+, +-s PKG+, to stop the graph on the package +PKG+.
-  +PKG+ can be an actual package name, a glob, or the keyword 'virtual'
-  (to stop on virtual packages). The package is still present on the
-  graph, but its dependencies are not.
+  +PKG+ can be an actual package name, a glob, the keyword 'virtual'
+  (to stop on virtual packages), or the keyword 'host' (to stop on
+  host packages). The package is still present on the graph, but its
+  dependencies are not.
 
 * +--exclude PKG+, +-x PKG+, like +--stop-on+, but also omits +PKG+ from
   the graph.
@@ -316,6 +317,16 @@ for details about this environment variable.
 The collected filesystem size data is only meaningful after a complete
 clean rebuild. Be sure to run +make clean all+ before using +make
 graph-size+.
+
+To compare the root filesystem size of two different Buildroot compilations,
+for example after adjusting the configuration or when switching to another
+Buildroot release, use the +size-stats-compare+ script. It takes two
++file-size-stats.csv+ files (produced by +make graph-size+) as input.
+Refer to the help text of this script for more details:
+
+----------------
+support/scripts/size-stats-compare -h
+----------------
 
 include::eclipse-integration.txt[]
 

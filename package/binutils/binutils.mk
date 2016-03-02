@@ -9,7 +9,7 @@
 BINUTILS_VERSION = $(call qstrip,$(BR2_BINUTILS_VERSION))
 ifeq ($(BINUTILS_VERSION),)
 ifeq ($(BR2_arc),y)
-BINUTILS_VERSION = arc-2015.12-rc1
+BINUTILS_VERSION = arc-2015.12
 else
 BINUTILS_VERSION = 2.24
 endif
@@ -59,6 +59,10 @@ HOST_BINUTILS_CONF_ENV += ac_cv_prog_MAKEINFO=missing
 # Install binutils after busybox to prefer full-blown utilities
 ifeq ($(BR2_PACKAGE_BUSYBOX),y)
 BINUTILS_DEPENDENCIES += busybox
+endif
+
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+BINUTILS_DEPENDENCIES += zlib
 endif
 
 # "host" binutils should actually be "cross"
