@@ -38,7 +38,7 @@ choice
 	  Select the specific U-Boot version you want to use
 
 config BR2_TARGET_UBOOT_LATEST_VERSION
-	bool "2016.01"
+	bool "2016.03"
 
 config BR2_TARGET_UBOOT_CUSTOM_VERSION
 	bool "Custom version"
@@ -83,7 +83,7 @@ endif
 
 config BR2_TARGET_UBOOT_VERSION
 	string
-	default "2016.01"	if BR2_TARGET_UBOOT_LATEST_VERSION
+	default "2016.03"	if BR2_TARGET_UBOOT_LATEST_VERSION
 	default BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_UBOOT_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_UBOOT_CUSTOM_TARBALL
@@ -332,11 +332,11 @@ config BR2_TARGET_UBOOT_ZYNQ_IMAGE
 	depends on BR2_TARGET_UBOOT_SPL
 	depends on BR2_TARGET_UBOOT_FORMAT_DTB_IMG
 	help
-	 Generate the BOOT.BIN file from U-Boot's SPL. The image
-	 boots the Xilinx Zynq chip without any FPGA bitstream.
-	 A bitstream can be loaded by the U-Boot. The SPL searchs
-	 for u-boot-dtb.img file so this U-Boot format is required
-	 to be set.
+	  Generate the BOOT.BIN file from U-Boot's SPL. The image
+	  boots the Xilinx Zynq chip without any FPGA bitstream.
+	  A bitstream can be loaded by the U-Boot. The SPL searchs
+	  for u-boot-dtb.img file so this U-Boot format is required
+	  to be set.
 
 menuconfig BR2_TARGET_UBOOT_ENVIMAGE
 	bool "Environment image"

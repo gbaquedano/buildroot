@@ -4,13 +4,29 @@
 #
 ################################################################################
 
-WPE_VERSION = 3f88b33a8d67d32b09723b5405fd914e4683a730
+WPE_VERSION = 3c7eda8107e4c4199a4bc0bb299d3ff922b0f0d2
 WPE_SITE = $(call github,Metrological,WebKitForWayland,$(WPE_VERSION))
 
 WPE_INSTALL_STAGING = YES
-WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby host-pkgconf zlib \
-	libgcrypt pcre libgles libegl cairo freetype fontconfig harfbuzz icu libxml2 \
-	libxslt sqlite libsoup jpeg libpng webp libinput libxkbcommon xkeyboard-config
+
+WPE_BUILD_WEBKIT=y
+WPE_BUILD_JSC=n
+WPE_USE_PORT=WPE
+ifeq ($(BR2_PACKAGE_WPE_JSC),y)
+WPE_BUILD_JSC=y
+ifeq ($(BR2_PACKAGE_WPE_ONLY_JSC),y)
+WPE_BUILD_WEBKIT=n
+WPE_USE_PORT=JSCOnly
+endif
+endif
+
+WPE_DEPENDENCIES = host-flex host-bison host-gperf host-ruby icu pcre
+
+ifeq ($(WPE_BUILD_WEBKIT),y)
+WPE_DEPENDENCIES += libgcrypt libgles libegl cairo freetype fontconfig \
+		    harfbuzz libxml2 libxslt sqlite libsoup jpeg libpng \
+		    webp libinput libxkbcommon xkeyboard-config
+endif
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
 WPE_DEPENDENCIES += host-ninja
@@ -26,6 +42,8 @@ WPE_EXTRA_FLAGS += \
 	-D__UCLIBC__
 endif
 
+
+ifeq ($(WPE_BUILD_WEBKIT),y)
 WPE_FLAGS = \
 	-DENABLE_ACCELERATED_2D_CANVAS=ON \
 	-DENABLE_GEOLOCATION=ON \
@@ -34,7 +52,9 @@ WPE_FLAGS = \
 	-DENABLE_SUBTLE_CRYPTO=ON \
 	-DENABLE_SHADOW_DOM=ON \
 	-DENABLE_FULLSCREEN_API=ON \
-	-DENABLE_NOTIFICATIONS=ON
+	-DENABLE_NOTIFICATIONS=ON \
+	-DENABLE_DATABASE_PROCESS=ON \
+	-DENABLE_INDEXED_DATABASE=ON
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
@@ -54,6 +74,7 @@ else
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
 WPE_DEPENDENCIES += wayland
 WPE_FLAGS += -DUSE_WPE_BACKEND_WAYLAND=ON
+WPE_FLAGS += -DUSE_WPE_BUFFER_MANAGEMENT_GBM=ON
 endif
 ifeq ($(BR2_PACKAGE_LIBDRM)$(BR2_PACKAGE_INTELCE_SDK),yn)
 WPE_DEPENDENCIES += libdrm
@@ -73,6 +94,7 @@ ifeq ($(BR2_PACKAGE_INTELCE_SDK),y)
 WPE_FLAGS += -DUSE_WPE_BACKEND_INTEL_CE=ON
 endif
 
+endif
 
 ifeq ($(BR2_PACKAGE_WPE_ENABLE_LOGGING),y)
 WPE_EXTRA_CFLAGS += -DLOG_DISABLED=0
@@ -93,6 +115,8 @@ WPE_EXTRA_FLAGS += \
 	-DCMAKE_C_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)" \
 	-DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -Wno-cast-align $(WPE_EXTRA_CFLAGS)"
 endif
+
+ifeq ($(WPE_BUILD_WEBKIT),y)
 
 ifeq ($(BR2_PACKAGE_GSTREAMER1),y)
 WPE_DEPENDENCIES += gstreamer1 gst1-plugins-base gst1-plugins-good gst1-plugins-bad
@@ -134,7 +158,7 @@ WPE_FLAGS += -DENABLE_PROVISIONING=ON
 endif
 endif
 
-ifeq ($(BR2_PACKAGE_OPENWEBRTC),y)
+ifeq ($(BR2_PACKAGE_WPE_ENABLE_MEDIA_STREAM),y)
 WPE_DEPENDENCIES += openwebrtc
 WPE_FLAGS += -DENABLE_MEDIA_STREAM=ON
 endif
@@ -149,8 +173,15 @@ else ifeq ($(BR2_PACKAGE_WPE_USE_PUNCH_HOLE_EXTERNAL),y)
 WPE_FLAGS += -DUSE_HOLE_PUNCH_EXTERNAL=ON
 endif
 
+endif
+
+ifeq ($(BR2_PACKAGE_WPE_ONLY_JSC), y)
+WPE_FLAGS += -DENABLE_STATIC_JSC=ON
+endif
+
+
 WPE_CONF_OPTS = \
-	-DPORT=WPE \
+	-DPORT=$(WPE_USE_PORT) \
 	-DCMAKE_BUILD_TYPE=$(WPE_BUILD_TYPE) \
 	$(WPE_EXTRA_FLAGS) \
 	$(WPE_FLAGS)
@@ -158,22 +189,71 @@ WPE_CONF_OPTS = \
 WPE_BUILDDIR = $(@D)/build-$(WPE_BUILD_TYPE)
 
 ifeq ($(BR2_PACKAGE_NINJA),y)
+
+WPE_BUILD_TARGETS=
+ifeq ($(WPE_BUILD_JSC),y)
+WPE_BUILD_TARGETS += jsc
+endif
+ifeq ($(WPE_BUILD_WEBKIT),y)
+WPE_BUILD_TARGETS += libWPEWebKit.so libWPEWebInspectorResources.so \
+		     WPE{Database,Network,Web}Process
+
+endif
+
 define WPE_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(WPE_BUILDDIR) $(WPE_EXTRA_OPTIONS) libWPEWebKit.so libWPEWebInspectorResources.so WPE{Web,Network}Process
+	$(TARGET_MAKE_ENV) $(HOST_DIR)/usr/bin/ninja -C $(WPE_BUILDDIR) $(WPE_EXTRA_OPTIONS) $(WPE_BUILD_TARGETS)
 endef
+
+ifeq ($(WPE_BUILD_JSC),y)
+define WPE_INSTALL_STAGING_CMDS_JSC
+	pushd $(WPE_BUILDDIR) && \
+	cp bin/jsc $(STAGING_DIR)/usr/bin/ && \
+	popd > /dev/null
+endef
+else
+WPE_INSTALL_STAGING_CMDS_JSC = true
+endif
+
+ifeq ($(WPE_BUILD_WEBKIT),y)
+define WPE_INSTALL_STAGING_CMDS_WEBKIT
+      cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
+      cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
+      DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
+      DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null
+endef
+else
+WPE_INSTALL_STAGING_CMDS_WEBKIT = true
+endif
 
 define WPE_INSTALL_STAGING_CMDS
-	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(STAGING_DIR)/usr/bin/ && \
-	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(STAGING_DIR)/usr/lib/ && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/JavaScriptCore/cmake_install.cmake > /dev/null && \
-	DESTDIR=$(STAGING_DIR) $(HOST_DIR)/usr/bin/cmake -DCOMPONENT=Development -P $(WPE_BUILDDIR)/Source/WebKit2/cmake_install.cmake > /dev/null )
+	($(WPE_INSTALL_STAGING_CMDS_JSC) && \
+	$(WPE_INSTALL_STAGING_CMDS_WEBKIT))
 endef
 
-define WPE_INSTALL_TARGET_CMDS
-	(cp $(WPE_BUILDDIR)/bin/WPE{Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
-	cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
-	$(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*)
+ifeq ($(WPE_BUILD_JSC),y)
+define WPE_INSTALL_TARGET_CMDS_JSC
+	cp $(WPE_BUILDDIR)/bin/jsc $(TARGET_DIR)/usr/bin/ && \
+	$(STRIPCMD) $(TARGET_DIR)/usr/bin/jsc
 endef
+else
+WPE_INSTALL_TARGET_CMDS_JSC = true
+endif
+
+ifeq ($(WPE_BUILD_WEBKIT),y)
+define WPE_INSTALL_TARGET_CMDS_WEBKIT
+      cp $(WPE_BUILDDIR)/bin/WPE{Database,Network,Web}Process $(TARGET_DIR)/usr/bin/ && \
+      cp -d $(WPE_BUILDDIR)/lib/libWPE* $(TARGET_DIR)/usr/lib/ && \
+      $(STRIPCMD) $(TARGET_DIR)/usr/lib/libWPEWebKit.so.0.0.*
+endef
+else
+WPE_INSTALL_TARGET_CMDS_WEBKIT = true
+endif
+
+define WPE_INSTALL_TARGET_CMDS
+	($(WPE_INSTALL_TARGET_CMDS_JSC) && \
+	$(WPE_INSTALL_TARGET_CMDS_WEBKIT))
+endef
+
 endif
 
 RSYNC_VCS_EXCLUSIONS += --exclude LayoutTests --exclude WebKitBuild

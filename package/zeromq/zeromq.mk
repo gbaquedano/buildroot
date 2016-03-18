@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZEROMQ_VERSION = 4.1.3
+ZEROMQ_VERSION = 4.1.4
 ZEROMQ_SITE = http://download.zeromq.org
 ZEROMQ_INSTALL_STAGING = YES
 ZEROMQ_DEPENDENCIES = util-linux
@@ -30,7 +30,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_ZEROMQ_PGM),y)
 ZEROMQ_DEPENDENCIES += host-pkgconf openpgm
-ZEROMQ_CONF_OPTS += --with-system-pgm
+ZEROMQ_CONF_OPTS += --with-pgm
 endif
 
 # ZeroMQ uses libsodium if it's available.
