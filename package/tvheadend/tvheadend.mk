@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = 3927788bb71ad0041a00d0daa35fae1cb6355b55
+TVHEADEND_VERSION = cd9f07fb865e5700156546ee326fbaf42ee99cf8
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPLv3+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -81,7 +81,7 @@ define TVHEADEND_CONFIGURE_CMDS
 			--python="$(HOST_DIR)/usr/bin/python"	\
 			--enable-dvbscan			\
 			--enable-bundle				\
-			--disable-libffmpeg_static		\
+			--disable-ffmpeg_static			\
 			--disable-hdhomerun_static		\
 			$(TVHEADEND_CONF_OPTS)			\
 	)
