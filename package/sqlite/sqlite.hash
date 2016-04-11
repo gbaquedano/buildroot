@@ -1,4 +1,4 @@
 # From http://www.sqlite.org/download.html
-sha1	c4b4dcd735a4daf5a2e2bb90f374484c8d4dad29	sqlite-autoconf-3110100.tar.gz
+sha1	fa1f3dbf6e2e8c6d14125b2eceda5b2e16a19f1f	sqlite-autoconf-3120100.tar.gz
 # Calculated based on the hash above
-sha256	533ff1d0271c2e666f01591271cef01a31648563affa0c95e80ef735077d4377	sqlite-autoconf-3110100.tar.gz
+sha256	1c038519862b3983b0475f3ed3143ce4bbfcd21bfbd0741192f415838c831a7c	sqlite-autoconf-3120100.tar.gz
