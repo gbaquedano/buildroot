@@ -10,14 +10,21 @@ IPMITOOL_SITE = http://downloads.sourceforge.net/project/ipmitool/ipmitool/$(IPM
 IPMITOOL_LICENSE = BSD-3c
 IPMITOOL_LICENSE_FILES = COPYING
 
+# Patching configure.ac
+IPMITOOL_AUTORECONF = YES
+
 ifeq ($(BR2_PACKAGE_IPMITOOL_LANPLUS),y)
 IPMITOOL_DEPENDENCIES += openssl
+IPMITOOL_CONF_OPTS += --enable-intf-lanplus
 else
 IPMITOOL_CONF_OPTS += --disable-intf-lanplus
 endif
 
-ifeq ($(BR2_PACKAGE_READLINE),y)
-IPMITOOL_DEPENDENCIES += readline
+ifeq ($(BR2_PACKAGE_IPMITOOL_IPMISHELL),y)
+IPMITOOL_DEPENDENCIES += ncurses readline
+IPMITOOL_CONF_OPTS += --enable-ipmishell
+else
+IPMITOOL_CONF_OPTS += --disable-ipmishell
 endif
 
 ifeq ($(BR2_PACKAGE_IPMITOOL_IPMIEVD),)
