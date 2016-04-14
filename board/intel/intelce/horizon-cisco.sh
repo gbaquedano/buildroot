@@ -1,5 +1,5 @@
 #!/bin/sh
-
+BIN_SOURCE=/NDS/wpe_resources
 BOARD_DIR="$(dirname $0)"
 ROOTFS_DIR="${BINARIES_DIR}/../rootfs"
 STAR="*"
@@ -40,6 +40,9 @@ mkdir -p "${ROOTFS_DIR}/www"
 rm -rf "${ROOTFS_DIR}/usr/lib/gstreamer-1.0/include"
 rm -rf "${ROOTFS_DIR}/usr/lib/libstdc++.so.6.0.20-gdb.py"
 rm -rf "${ROOTFS_DIR}/etc/ssl/man"
+
+
+sed -i "s#SOURCE=/mnt/usb#SOURCE=${BIN_SOURCE}#g" "${ROOTFS_DIR}/NDS/usb_script.sh"
 
 tar -cvf "${BINARIES_DIR}/horizon.tar" -C "${ROOTFS_DIR}" .
 

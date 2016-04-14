@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CPPSDK_VERSION = 23d75b2ec976b3840c302ceb6f6a60853f1343ca
+CPPSDK_VERSION = fe0d48231a7f34a2fe2b9676b6a7f987bd10abb8
 CPPSDK_SITE_METHOD = git
 CPPSDK_SITE = git@github.com:Metrological/cppsdk.git
 CPPSDK_INSTALL_STAGING = YES
