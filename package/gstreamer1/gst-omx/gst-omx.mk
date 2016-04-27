@@ -8,33 +8,17 @@ GST_OMX_VERSION = 1.2.0
 GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
 GST_OMX_SITE = http://gstreamer.freedesktop.org/src/gst-omx
 
-ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GST_OMX_VERSION = e6792630a8f39fe30eb7ff8c13a779e067086b84
-GST_OMX_SOURCE = gst-omx-$(GST_OMX_VERSION).tar.xz
-GST_OMX_SITE = http://cgit.freedesktop.org/gstreamer/gst-omx/snapshot
-BR_NO_CHECK_HASH_FOR += $(GST_OMX_SOURCE)
-GST_OMX_POST_DOWNLOAD_HOOKS += GSTREAMER1_COMMON_DOWNLOAD
-GST_OMX_POST_EXTRACT_HOOKS += GSTREAMER1_COMMON_EXTRACT
-GST_OMX_POST_INSTALL_TARGET_HOOKS += GSTREAMER1_REMOVE_LA_FILES
-GST_OMX_AUTORECONF = YES
-GST_OMX_AUTORECONF_OPTS = -I $(@D)/common/m4
-endif
-
 GST_OMX_LICENSE = LGPLv2.1
 GST_OMX_LICENSE_FILES = COPYING
-
-GST_OMX_DEPENDENCIES = gstreamer1 gst1-plugins-base libopenmax
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 GST_OMX_CONF_OPTS = \
 	--with-omx-target=rpi
 GST_OMX_CONF_ENV = \
 	CFLAGS="$(TARGET_CFLAGS) \
-		-D_VIDEOCORE -DRASPBERRY_PI \
 		-I$(STAGING_DIR)/usr/include/IL \
 		-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
 		-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
-GST_OMX_DEPENDENCIES += gst1-plugins-bad
 endif
 
 ifeq ($(BR2_PACKAGE_BELLAGIO),y)
@@ -48,8 +32,7 @@ GST_OMX_CONF_ENV = \
 		-DOMX_VERSION_STEP=0"
 endif
 
-GST_OMX_CONF_OPTS += \
-	--disable-examples
+GST_OMX_DEPENDENCIES = gstreamer1 gst1-plugins-base libopenmax
 
 # adjust library paths to where buildroot installs them
 define GST_OMX_FIXUP_CONFIG_PATHS

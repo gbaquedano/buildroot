@@ -1,6 +1,0 @@
-config BR2_PACKAGE_INTELCE_OSAL
-	bool "osal"
-	default n
-	depends on BR2_PACKAGE_INTELCE_SDK
-	help
-	  None

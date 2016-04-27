@@ -1,4 +1,0 @@
-config BR2_PACKAGE_LIBUSRSCTP
-	bool "libusrsctp"
-	help
-	  Reference Implementation for SCTP - RFC4960
