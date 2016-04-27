@@ -5,8 +5,8 @@
 ################################################################################
 
 SQUID_VERSION_MAJOR = 3.5
-SQUID_VERSION = $(SQUID_VERSION_MAJOR).16
-SQUID_SOURCE = squid-$(SQUID_VERSION).tar.bz2
+SQUID_VERSION = $(SQUID_VERSION_MAJOR).17
+SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
 SQUID_SITE = http://www.squid-cache.org/Versions/v3/$(SQUID_VERSION_MAJOR)
 SQUID_LICENSE = GPLv2+
 SQUID_LICENSE_FILES = COPYING
@@ -60,13 +60,6 @@ SQUID_CONF_OPTS += --with-openssl
 SQUID_DEPENDENCIES += openssl
 else
 SQUID_CONF_OPTS += --without-openssl
-endif
-
-ifeq ($(BR2_PACKAGE_GNUTLS),y)
-SQUID_CONF_OPTS += --with-gnutls
-SQUID_DEPENDENCIES += gnutls
-else
-SQUID_CONF_OPTS += --without-gnutls
 endif
 
 ifeq ($(BR2_PACKAGE_GNUTLS),y)

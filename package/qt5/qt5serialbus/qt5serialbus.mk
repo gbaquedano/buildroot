@@ -11,8 +11,8 @@ QT5SERIALBUS_DEPENDENCIES = qt5base qt5serialport
 QT5SERIALBUS_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_QT5BASE_LICENSE_APPROVED),y)
-QT5SERIALBUS_LICENSE = LGPLv2.1 with exception or LGPLv3 or GPLv2
-QT5SERIALBUS_LICENSE_FILES = LICENSE.LGPLv21 LGPL_EXCEPTION.txt LICENSE.LGPLv3 LICENSE.GPLv2
+QT5SERIALBUS_LICENSE = GPLv2 or GPLv3 or LGPLv3, GFDLv1.3 (docs)
+QT5SERIALBUS_LICENSE_FILES = LICENSE.GPLv2 LICENSE.GPLv3 LICENSE.LGPLv3 LICENSE.FDL
 else
 QT5SERIALBUS_LICENSE = Commercial license
 QT5SERIALBUS_REDISTRIBUTE = NO
@@ -32,9 +32,19 @@ define QT5SERIALBUS_INSTALL_STAGING_CMDS
 endef
 
 ifeq ($(BR2_STATIC_LIBS),)
-define QT5SERIALBUS_INSTALL_TARGET_CMDS
-	cp -dpf $(STAGING_DIR)/usr/lib/libQt5SerialBus.so.* $(TARGET_DIR)/usr/lib
+define QT5SERIALBUS_INSTALL_TARGET_LIBS
+	cp -dpf $(STAGING_DIR)/usr/lib/libQt5SerialBus.so.* \
+		$(TARGET_DIR)/usr/lib
+	mkdir -p $(TARGET_DIR)/usr/lib/qt/plugins/canbus
+	cp -dpf $(STAGING_DIR)/usr/lib/qt/plugins/canbus/*.so \
+		$(TARGET_DIR)/usr/lib/qt/plugins/canbus
 endef
 endif
+
+define QT5SERIALBUS_INSTALL_TARGET_CMDS
+	$(QT5SERIALBUS_INSTALL_TARGET_LIBS)
+	$(INSTALL) -m 0755 -D $(@D)/bin/canbusutil \
+		$(TARGET_DIR)/usr/bin/canbusutil
+endef
 
 $(eval $(generic-package))

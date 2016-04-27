@@ -1,6 +1,0 @@
-config BR2_PACKAGE_INTELCE_CONFIG_DATABASE
-	bool "config_database"
-	default n
-	depends on BR2_PACKAGE_INTELCE_SDK
-	help
-	  None

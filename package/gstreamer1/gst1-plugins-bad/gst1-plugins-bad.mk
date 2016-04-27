@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.8.0
+GST1_PLUGINS_BAD_VERSION = 1.8.1
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = http://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -12,15 +12,6 @@ GST1_PLUGINS_BAD_LICENSE_FILES = COPYING COPYING.LIB
 # Unknown and GPL licensed plugins will append to GST1_PLUGINS_BAD_LICENSE if
 # enabled.
 GST1_PLUGINS_BAD_LICENSE = LGPLv2+ LGPLv2.1+
-
-ifeq ($(BR2_PACKAGE_GSTREAMER1_GIT),y)
-GST1_PLUGINS_BAD_SITE = http://cgit.freedesktop.org/gstreamer/gst-plugins-bad/snapshot
-BR_NO_CHECK_HASH_FOR += $(GST1_PLUGINS_BAD_SOURCE)
-GST1_PLUGINS_BAD_POST_DOWNLOAD_HOOKS += GSTREAMER1_COMMON_DOWNLOAD
-GST1_PLUGINS_BAD_POST_EXTRACT_HOOKS += GSTREAMER1_COMMON_EXTRACT
-GST1_PLUGINS_BAD_PRE_CONFIGURE_HOOKS += GSTREAMER1_FIX_AUTOPOINT
-GST1_PLUGINS_BAD_POST_INSTALL_TARGET_HOOKS += GSTREAMER1_REMOVE_LA_FILES
-endif
 
 GST1_PLUGINS_BAD_AUTORECONF = YES
 GST1_PLUGINS_BAD_AUTORECONF_OPTS = -I $(@D)/common/m4
@@ -96,7 +87,7 @@ GST1_PLUGINS_BAD_DEPENDENCIES = gst1-plugins-base gstreamer1
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 # RPI has odd locations for several required headers.
 GST1_PLUGINS_BAD_CONF_ENV += \
-	CFLAGS="$(TARGET_CFLAGS) -Wno-error \
+	CPPFLAGS="$(TARGET_CPPFLAGS) \
 	-I$(STAGING_DIR)/usr/include/IL \
 	-I$(STAGING_DIR)/usr/include/interface/vcos/pthreads \
 	-I$(STAGING_DIR)/usr/include/interface/vmcs_host/linux"
@@ -776,13 +767,6 @@ GST1_PLUGINS_BAD_CONF_OPTS += --enable-sdl
 GST1_PLUGINS_BAD_DEPENDENCIES += sdl
 else
 GST1_PLUGINS_BAD_CONF_OPTS += --disable-sdl
-endif
-
-ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SMOOTHSTREAMING),y)
-GST1_PLUGINS_BAD_CONF_OPTS += --enable-smoothstreaming
-GST1_PLUGINS_BAD_DEPENDENCIES += libxml2
-else
-GST1_PLUGINS_BAD_CONF_OPTS += --disable-smoothstreaming
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_SNDFILE),y)

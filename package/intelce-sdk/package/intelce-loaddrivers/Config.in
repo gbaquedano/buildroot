@@ -1,5 +1,0 @@
-config BR2_PACKAGE_INTELCE_LOADDRIVERS
-	bool "Install driver init scripts"
-	depends on BR2_PACKAGE_INTELCE_SDK
-	help
-	  Install driver init scripts.

@@ -1,3 +1,0 @@
-config BR2_PACKAGE_INTELCE_8051_SDK
-	bool "8051 SDK" 
-	depends on BR2_PACKAGE_INTELCE_SDK 

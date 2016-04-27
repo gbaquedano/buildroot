@@ -5,6 +5,10 @@
 # so put it here instead
 source "package/gdb/Config.in.host"
 
+# https://sourceware.org/bugzilla/show_bug.cgi?id=19405
+config BR2_TOOLCHAIN_HAS_BINUTILS_BUG_19405
+	bool
+
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
 	bool
 
@@ -316,7 +320,6 @@ config BR2_TOOLCHAIN_GCC_AT_LEAST
 config BR2_TOOLCHAIN_HAS_SYNC_1
 	bool
 	default y
-	depends on !BR2_x86_i386
 	depends on !BR2_bfin
 	depends on !BR2_microblaze
 	depends on !BR2_sparc
@@ -330,7 +333,6 @@ config BR2_TOOLCHAIN_HAS_SYNC_4
 	bool
 	default y
 	depends on !BR2_sparc
-	depends on !BR2_x86_i386
 	depends on !(BR2_arc && !BR2_ARC_ATOMIC_EXT)
 
 # The availability of __sync for 8-byte types on ARM is somewhat
@@ -362,7 +364,6 @@ config BR2_TOOLCHAIN_X86_HAS_SYNC_8
 	bool
 	default y
 	depends on BR2_i386
-	depends on !BR2_x86_i386
 	depends on !BR2_x86_i486
 	depends on !BR2_x86_c3
 	depends on !BR2_x86_winchip_c6

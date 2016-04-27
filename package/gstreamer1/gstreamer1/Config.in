@@ -16,17 +16,11 @@ config BR2_PACKAGE_GSTREAMER1
 
 if BR2_PACKAGE_GSTREAMER1
 
-config BR2_PACKAGE_GSTREAMER1_GIT
-	bool "git snapshot"
-	select BR2_PACKAGE_GST1_COMMON
-	help
-	  Use git snapshot version of master branch.
-
 config BR2_PACKAGE_GSTREAMER1_PARSE
 	bool "enable command-line parser"
 	default y
 	help
-	  Enable command line parser for gstreamer. This may incrase the CPu
+	  Enable command line parser for gstreamer. This may increase the CPU
 	  overhead by a small amount.
 
 config BR2_PACKAGE_GSTREAMER1_TRACE
