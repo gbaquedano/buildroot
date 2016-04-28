@@ -348,9 +348,12 @@ check_cross_compiler_exists = \
 	fi
 
 #
-# Check for toolchains known not to work with Buildroot. For now, we
-# only check for Angstrom toolchains, by looking at the vendor part of
-# the host tuple.
+# Check for toolchains known not to work with Buildroot.
+# - For the Angstrom toolchains, we check by looking at the vendor part of
+#   the host tuple.
+# - Exclude distro-class toolchains which are not relocatable.
+# - Exclude broken toolchains which return "libc.a" with -print-file-name.
+# - Exclude toolchains which doesn't support --sysroot option.
 #
 # $1: cross-gcc path
 #
@@ -371,6 +374,16 @@ check_unusable_toolchain = \
 		echo "and contain a lot of pre-built libraries that would conflict with"; \
 		echo "the ones Buildroot wants to build."; \
 		exit 1; \
+	fi; \
+	libc_a_path=`$${__CROSS_CC} -print-file-name=libc.a` ; \
+	if test "$${libc_a_path}" = "libc.a" ; then \
+		echo "Unable to detect the toolchain sysroot, Buildroot cannot use this toolchain." ; \
+		exit 1 ; \
+	fi ; \
+	sysroot_dir="$(call toolchain_find_sysroot,$${__CROSS_CC})" ; \
+	if test -z "$${sysroot_dir}" ; then \
+		echo "External toolchain doesn't support --sysroot. Cannot use." ; \
+		exit 1 ; \
 	fi
 
 #
