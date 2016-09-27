@@ -14,8 +14,6 @@ ENLIGHTENMENT_DEPENDENCIES = \
 	host-pkgconf \
 	host-efl \
 	efl \
-	elementary \
-	libevas-generic-loaders \
 	xcb-util-keysyms
 
 ENLIGHTENMENT_CONF_OPTS = \
