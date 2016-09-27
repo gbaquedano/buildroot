@@ -143,6 +143,53 @@ comment "----------------------------------------------------"
 endif
 
 ###############################################################################
+comment "Legacy options removed in 2016.11"
+
+config BR2_KERNEL_HEADERS_4_0
+	bool "kernel headers version 4.0.x are no longer supported"
+	select BR2_KERNEL_HEADERS_3_18
+	select BR2_LEGACY
+	help
+	  Version 4.0.x of the Linux kernel headers have been deprecated
+	  for more than four buildroot releases and are now removed.
+	  As an alternative, version 3.18.x of the headers have been
+	  automatically selected in your configuration.
+
+config BR2_KERNEL_HEADERS_3_19
+	bool "kernel headers version 3.19.x are no longer supported"
+	select BR2_KERNEL_HEADERS_3_18
+	select BR2_LEGACY
+	help
+	  Version 3.19.x of the Linux kernel headers have been deprecated
+	  for more than four buildroot releases and are now removed.
+	  As an alternative, version 3.18.x of the headers have been
+	  automatically selected in your configuration.
+
+config BR2_PACKAGE_LIBEVAS_GENERIC_LOADERS
+	bool "libevas-generic-loaders package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_EFL
+	help
+	  With EFL 1.18, libevas-generic-loaders is now provided by the efl
+	  package.
+
+config BR2_PACKAGE_ELEMENTARY
+	bool "elementary package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_EFL
+	help
+	  With EFL 1.18, elementary is now provided by the efl package.
+
+config BR2_LINUX_KERNEL_CUSTOM_LOCAL
+	bool "Linux kernel local directory option removed"
+	help
+	  The option to select a local directory as the source of the Linux
+	  kernel has been removed. It hurts reproducibility of builds.
+
+	  In case you were using this option during development of your
+	  Linux kernel, use the override mechanism instead.
+
+###############################################################################
 comment "Legacy options removed in 2016.08"
 
 config BR2_PACKAGE_SYSTEMD_COMPAT
